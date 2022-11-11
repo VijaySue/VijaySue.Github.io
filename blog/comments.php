@@ -1,155 +1,192 @@
-<?php function threadedComments($comments, $options)
-{
-  $commentClass = '';
-  if ($comments->authorId) {
-    if ($comments->authorId == $comments->ownerId) {
-      $commentClass .= ' comment-by-author';
-    } else {
-      $commentClass .= ' comment-by-user';
-    }
-  }
+<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
 
-  $commentLevelClass = $comments->levels > 0 ? ' comment-child' : ' comment-parent';
+<?php function threadedComments($comments, $options) {
+    $commentClass = '';
+    if ($comments->authorId) {
+        if ($comments->authorId == $comments->ownerId) {
+            $commentClass .= ' comment-by-author';  //如果是文章作者的评论添加 .comment-by-author 样式
+        } else {
+            $commentClass .= ' comment-by-user';  //如果是评论作者的添加 .comment-by-user 样式
+        }
+    } 
+    $commentLevelClass = $comments->_levels > 0 ? ' comment-child' : ' comment-parent';  //评论层数大于0为子级，否则是父级
 ?>
-  <div class="mt-3" id="li-<?php $comments->theId(); ?>" class="<?php if ($comments->levels > 0) {
-                                                                  echo ' comment-child';
-                                                                  $comments->levelsAlt(' comment-level-odd', ' comment-level-even');
-                                                                } else {
-                                                                  echo 'comment-parent';
-                                                                }
-                                                                $comments->alt(' comment-odd', ' comment-even');
-                                                                echo $commentClass;
-                                                                ?>">
-    <div class="media">
-      <?php $comments->gravatar('100', ''); ?>
-      <div class="media-body" id="<?php $comments->theId(); ?>">
-        <div class="dropdown float-right text-muted">
-          <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown" aria-expanded="false">
-            <i class="fonts icon-CombinedShape"></i>
-          </a>
-          <div class="dropdown-menu dropdown-menu-right">
-            <a href="javascript:void(0);" class="dropdown-item">编辑</a>
-            <a href="javascript:void(0);" class="dropdown-item">删除</a>
-          </div>
+ 
+<li id="<?php $comments->theId(); ?>" class="comment-body<?php
+if ($comments->levels > 0) {
+    echo ' comment-child';
+    $comments->levelsAlt(' comment-level-odd', ' comment-level-even');
+} else {
+    echo ' comment-parent';
+}
+$comments->alt(' comment-odd', ' comment-even');
+echo $commentClass;
+?>">
+    <div class="comment-self-wrap">
+        <div class="comment-body__avatar">
+            <?php $comments->gravatar('40', ''); ?>
         </div>
-        <h5 class="m-0"><?php $comments->author(); ?></h5>
-        <a href="<?php $comments->permalink(); ?>"></a>
-        <p class="text-muted mb-0"><small>发表于：<?php $comments->date('Y年m月d日 H小时i分s秒'); ?></small></p>
-        <div class="my-1 comments-text text-break-all">
-          <?php if (!$comments->levels > 0) { ?>
-            <i class="fonts icon-quote font-20"></i>
-          <?php } ?>
-          <?php get_comment_at($comments->coid); ?>
-          <?php $comments->content(); ?>
+        <div class="comment-body__main">
+            <div class="comment-body__main--meta">
+                <div class="comment-author__meta">
+                    <div class="comment-author__meta--wrap">
+                        <h3><?php $comments->author(); ?></h3>
+                        <?php if ($comments->authorId == $comments->ownerId) { ?>
+                        <div class="comment-tag tag-primary">博主</div>
+                        <?php } ?>
+                    </div>
+                    
+                    <time datetime="<?php $comments->date('c'); ?>"><?php $comments->date('Y年m月d日 H:i'); ?></time>
+                </div>
+                <div class="comment-reply" data-no-instant>
+                    <?php $comments->reply(); ?>
+                </div>
+            </div>
+            <div class="comment-body__main--text">
+                <?php $comments->content(); ?>
+            </div>
         </div>
-        <div class="comments-reply">
-          <div href="javascript: void(0);" class="btn btn-sm btn-link text-muted p-0 pl-2">
-            <i class='fonts icon-comments mr-1'></i><?php $comments->reply('Reply'); ?>
-          </div>
-        </div>
-      </div> <!-- end media-body -->
-    </div> <!-- end media-->
-    <!-- 子评论 -->
+    </div>
     <?php if ($comments->children) { ?>
-      <?php $comments->threadedComments($options); ?>
+        <div class="comment-children">
+            <?php $comments->threadedComments($options); ?>
+        </div>
     <?php } ?>
-    <!-- 分割线 -->
-    <?php if (!$comments->levels > 0) { ?>
-      <hr />
-    <?php } ?>
-  </div>
+</li>
+
+    
+ 
 <?php } ?>
 
-
 <div id="comments">
-  <?php $this->comments()->to($comments); ?>
-  <!-- 评论框 -->
-  <?php if ($this->allow('comment')) : ?>
-    <div class="comment bg-light p-2 mb-4 shadow-sm border rounded comments-form" id="<?php $this->respondId(); ?>">
-      <!-- 取消回复按钮 -->
-      <div id="cancel-reply">
-        <?php $comments->cancelReply('&times;'); ?>
-      </div>
-      <form class="comment-area-box" method="post" action="<?php $this->commentUrl() ?>" id="comment-form" role="form">
-        <div class="row">
-          <!-- 博主登录 -->
-          <?php if ($this->user->hasLogin()) : ?>
-            <div class="col-12" id="comments-admin">
-              <div class="row">
-                <div class="col-6 d-flex">
-                  <?php $this->author->gravatar('100'); ?>
-                  <h5 class="m-0">
-                    <a href="<?php $this->options->profileUrl(); ?>">
-                      <?php $this->user->screenName(); ?>
-                    </a>
-                    <br />
-                    <small>Administrator</small>
-                  </h5>
-                </div>
-                <div class="col-6 text-right">
-                  <a class="btn btn-sm btn-danger mr-2" href="<?php $this->options->logoutUrl(); ?>" title="Logout"><?php _e('Logout'); ?></a>
-                </div>
-              </div>
+    <?php $this->comments()->to($comments); ?>
+
+    <?php if($this->allow('comment')): ?>
+    <div id="<?php $this->respondId(); ?>" class="respond">
+        <div class="reply-title">
+    	    <h3 id="response"><?php _e('添加新评论'); ?></h3>
+            <div class="cancel-comment-reply">
+                <?php $comments->cancelReply(); ?>
             </div>
-          <?php else : ?>
-            <!-- user -->
-            <div class="col-12 col-md-4 input-group mb-2 mb-md-0">
-              <div class="input-group-prepend">
-                <span class="input-group-text fonts icon-user-1"></span>
-              </div>
-              <input type="text" class="form-control" placeholder="Username*" name="author" id="author" value="<?php $this->remember('author'); ?>" required>
-            </div>
-            <!-- email -->
-            <div class="col-12 col-md-4 input-group mb-2 mb-md-0">
-              <div class="input-group-prepend">
-                <span class="input-group-text fonts icon-email"></span>
-              </div>
-              <input type="email" name="mail" id="mail" class="form-control" placeholder="Your Email*" value="<?php $this->remember('mail'); ?>" required />
-            </div>
-            <!-- url -->
-            <div class="col-12 col-md-4 input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text fonts icon-lianjie"></span>
-              </div>
-              <input type="url" name="url" id="url" class="form-control" placeholder="<?php _e('http(s)://'); ?>" value="<?php $this->remember('url'); ?>" <?php if ($this->options->commentsRequireURL) : ?> required<?php endif; ?>>
-            </div>
-          <?php endif; ?>
-          <!-- textarea -->
-          <div class="col-12 mt-3">
-            <textarea id="textarea" name="text" rows="4" class="form-control border-0 resize-none" placeholder="说说你的想法...." required><?php $this->remember('text'); ?></textarea>
-            <div class="p-2 mt-1 bg-light d-flex justify-content-between align-items-center">
-              <div>
-                <span class="btn btn-sm px-2 btn-light small" id="limittext-info">还能输入500个字符</span>
-                <!-- <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i class="fonts icon-tupian"></i></a> -->
-                <!-- <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i class="fonts icon-map-marker-alt-solid"></i></a> -->
-                <!-- <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i class="fonts icon-paperclip-solid"></i></a> -->
-              </div>
-              <button type="submit" class="btn btn-sm btn-success"><i class='fonts icon-paper-plane-solid mr-1'></i>提交</button>
-            </div>
-          </div>
         </div>
-      </form>
+    	<form method="post" action="<?php $this->commentUrl() ?>" id="comment-form" role="form">
+            <?php if($this->user->hasLogin()): ?>
+    		    <p><?php _e('登录身份: '); ?><a href="<?php $this->options->profileUrl(); ?>"><?php $this->user->screenName(); ?></a>. <a href="<?php $this->options->logoutUrl(); ?>" title="Logout"><?php _e('退出'); ?> &raquo;</a></p>
+            <?php else: ?>
+                <div class="reply-userinfo">
+                    <div class="reply-userinfo__item reply-name">
+                        <input type="text" placeholder="<?php _e('称呼'); ?>" name="author" id="author" class="text" value="<?php $this->remember('author'); ?>" required />
+                    </div>
+                    <div class="reply-userinfo__item reply-email">
+                        <input type="email" placeholder="<?php _e('Email'); ?>" name="mail" id="mail" class="text" value="<?php $this->remember('mail'); ?>"<?php if ($this->options->commentsRequireMail): ?> required<?php endif; ?> />
+                    </div>
+                    <div class="reply-userinfo__item reply-url">
+                        <input type="url" placeholder="<?php _e('网站'); ?>" name="url" id="url" class="text" placeholder="<?php _e('http://'); ?>" value="<?php $this->remember('url'); ?>"<?php if ($this->options->commentsRequireURL): ?> required<?php endif; ?> />
+                    </div>
+                </div>
+            <?php endif; ?>
+            <div class="reply-textarea">
+                <textarea rows="8" cols="50" placeholder="<?php _e('内容'); ?>" name="text" id="textarea" class="textarea" required ><?php $this->remember('text'); ?></textarea>
+            </div>
+            <div class="reply-submit">
+                <button type="submit" class="submit"><?php _e('提交评论'); ?></button>
+            </div>
+    	</form>
     </div>
-    <!-- 禁止评论 -->
-  <?php else : ?>
+    <?php else: ?>
     <h3><?php _e('评论已关闭'); ?></h3>
-  <?php endif; ?>
-  <!-- 评论框结束-->
-  <!-- 回复列表 -->
-  <?php if ($comments->have()) : ?>
-    <div class="card mb-4">
-      <div class="card-body pb-1">
-        <!-- 评论头部提示信息 -->
-        <h4 class="card-title"><?php $this->commentsNum(_t('暂无评论'), _t('仅有一条评论'), _t('已有 %d 条评论')); ?></h4>
-        <!-- 评论的内容 -->
-        <?php $comments->listComments(); ?>
-        <!-- 评论page -->
-        <nav id="comments-page">
-          <?php $comments->pageNav('&laquo;', '&raquo;', 2, '', array('wrapTag' => 'ul', 'wrapClass' => 'pagination justify-content-center', 'itemTag' => 'li', 'textTag' => 'span', 'currentClass' => 'active', 'prevClass' => 'prev', 'nextClass' => 'next')); ?>
-        </nav>
-      </div>
+    <?php endif; ?>
+
+
+    <?php if ($comments->have()): ?>
+	<h3><?php $this->commentsNum(_t('暂无评论'), _t('仅有一条评论'), _t('已有 %d 条评论')); ?></h3>
+    
+    <?php $comments->listComments(); ?>
+
+    <div class="pagination">
+        <?php $comments->pageNav('<i class="iconfont icon-angle-left"></i>', '<i class="iconfont icon-angle-right"></i>'); ?>
     </div>
-  <?php endif; ?>
+    
+    <?php endif; ?>
 
-
+<script>
+(function () {
+    // TypechoComment
+    var commentFunction = document.head.querySelector('script[type]')
+    if (commentFunction) {
+        var innerHTML = commentFunction.innerHTML
+        // 已预加载
+        if (innerHTML && innerHTML.match(/this.dom\('respond-.*?'\)/ig)) {
+            var after = innerHTML.replace(/this.dom\('respond-.*?'\)/ig, "this.dom('respond-<?php $this->is('post') ? print_r('post') : print_r('page') ?>-<?php $this->cid() ?>')")
+            setTimeout(function() {
+                eval(after)
+            })
+            return
+        }
+    }
+    // 添加TypechoComment
+    var script = document.createElement('script')
+    script.setAttribute('type', 'text/javascript')
+    script.innerHTML = `
+(function () {
+    window.TypechoComment = {
+        dom : function (id) {
+            return document.getElementById(id);
+        },
+        create : function (tag, attr) {
+            var el = document.createElement(tag);
+            for (var key in attr) {
+                el.setAttribute(key, attr[key]);
+            }
+            return el;
+        },
+        reply : function (cid, coid) {
+            var comment = this.dom(cid), parent = comment.parentNode,
+                response = this.dom('respond-<?php $this->is('post') ? print_r('post') : print_r('page') ?>-<?php $this->cid() ?>'), input = this.dom('comment-parent'),
+                form = 'form' == response.tagName ? response : response.getElementsByTagName('form')[0],
+                textarea = response.getElementsByTagName('textarea')[0];
+            if (null == input) {
+                input = this.create('input', {
+                    'type' : 'hidden',
+                    'name' : 'parent',
+                    'id'   : 'comment-parent'
+                });
+                form.appendChild(input);
+            }
+            input.setAttribute('value', coid);
+            if (null == this.dom('comment-form-place-holder')) {
+                var holder = this.create('div', {
+                    'id' : 'comment-form-place-holder'
+                });
+                response.parentNode.insertBefore(holder, response);
+            }
+            comment.appendChild(response);
+            this.dom('cancel-comment-reply-link').style.display = '';
+            if (null != textarea && 'text' == textarea.name) {
+                textarea.focus();
+            }
+            return false;
+        },
+        cancelReply : function () {
+            var response = this.dom('respond-<?php $this->is('post') ? print_r('post') : print_r('page') ?>-<?php $this->cid() ?>'),
+            holder = this.dom('comment-form-place-holder'), input = this.dom('comment-parent');
+            if (null != input) {
+                input.parentNode.removeChild(input);
+            }
+            if (null == holder) {
+                return true;
+            }
+            this.dom('cancel-comment-reply-link').style.display = 'none';
+            holder.parentNode.insertBefore(response, holder);
+            return false;
+        }
+    }
+})()
+`
+    document.head.insertBefore(script, commentFunction)
+    setTimeout(function() {
+        eval(script.innerHTML)
+    })
+})()
+</script>
 </div>

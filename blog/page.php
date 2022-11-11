@@ -31,19 +31,15 @@
                     <?php endif; ?>
                     <a class="author-name" href="<?php $this->author->permalink(); ?>"><?php $this->author() ?></a>
                 </div>
-                <div class="post-info__meta--time">
-                    <i class="iconfont icon-clock"></i>
-                    <time datetime="<?php $this->date('c'); ?>"><?php $this->date('Y年m月d日'); ?></time>
-                </div>
             </div>
         </div>
     </div>
     <?php if(Service::get_postthumb($this)): ?>
     <div class="inner-header__bg top-bg" style="background-image:url(<?php echo Service::get_postthumb($this) ?>)">
     <?php elseif($this->options->postImgUrl): ?>
-    <div class="inner-header__bg top-bg" style="background-image:url(<?php echo $this->options->postImgUrl; ?>?rand=<?php echo $imgrand;?>)">
+    <div class="inner-header__bg top-bg" style="background-image:url(<?php echo $this->options->postImgUrl ?>?rand=<?php echo $imgrand;?>)">
     <?php else: ?>
-    <div class="inner-header__bg top-bg" style="background-image:url(<?php $this->options->themeUrl('/img/default_thumb.jpg'); ?>)">
+    <div class="inner-header__bg top-bg" style="background-image:url(<?php $this->options->themeUrl('/img/default_bg.jpg'); ?>)">
     <?php endif; ?>
     </div>
     <div class="inner-header__waves top-waves">
@@ -66,33 +62,9 @@
     <div class="post__wrap">
         <div id="post-nav" class="post-menu"></div>
         <div class="post-main">
-            <div class="post-main__tags">
-                <?php foreach($this->categories as $cat): ?>
-                <a href="<?php echo $cat["permalink"]?>" class="post-tag-cat tag-warning">
-                    <i class="iconfont icon-folder"></i>
-                    <span><?php echo $cat["name"] ?></span>
-                </a>
-                <?php endforeach; ?>
-                <?php foreach($this->tags as $tag): ?>
-                <a href="<?php echo $tag["permalink"]?>" class="post-tag-tag tag-success">
-                    <i class="iconfont icon-tag"></i>
-                    <span><?php echo $tag["name"] ?></span>
-                </a>
-                <?php endforeach; ?>
-            </div>
             <div id="post-main-section" class="article-content line-numbers">
                 <?php echo Service::set_lazyload($this->content); ?>
             </div>
-            <ul class="post-near">
-                <li>
-                    <i class="iconfont icon-angle-left"></i>
-                    <?php $this->theNext('%s','没有了'); ?>
-                </li>
-                <li>
-                    <?php $this->thePrev('%s','没有了'); ?>
-                    <i class="iconfont icon-angle-right"></i>
-                </li>
-            </ul>
             <?php $this->need('comments.php'); ?>
         </div>
     </div>
