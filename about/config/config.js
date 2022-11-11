@@ -141,7 +141,7 @@ var config = {
     icon: [
         ["./svg/LeetCode.svg", "https://leetcode.cn/u/affectionate-roentgen4c6/", "我的力扣主页"],
         ["./svg/github.svg", "https://github.com/VijaySue", "我的GitHub主页"],
-        ["./svg/博客.svg", "http://vijay.vip/blog", "我的个人博客"],
+        ["./svg/博客.svg", "../blog", "我的个人博客"],
         ["./svg/codeforces.svg", "https://codeforces.com/profile/VijaySue", "我的CodeForces主页"],
         ["./svg/csdn.svg", "https://blog.csdn.net/weixin_67559204?spm=1000.2115.3001.5343", "我的CSDN主页"]
     ],
