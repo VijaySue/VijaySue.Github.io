@@ -2,7 +2,7 @@ var config = {
     /*在这里配置你的基本信息，所有数据以字符串形式给出*/
     name: "Vijay",
     sex: "男",
-    age: "19",
+    age: "20",
     phone: "16630122213",
     email: "vijaysue@yeah.net",
     address: "现居河北省石家庄市",
@@ -80,7 +80,8 @@ var config = {
      */
     portfolio: [
        ["./images/show-1.png","https://vijaysue.github.io/","个人博客","利用JS，CSS，HTML技术开发的一站式个人博客"],
-       ["./images/show-2.png","https://github.com/VijaySue/Snake","贪吃蛇","一款利用C++面向对象特性开发的命令行贪吃蛇游戏"]
+       ["./images/show-2.png","https://github.com/VijaySue/Snake","贪吃蛇","一款基于C++面向对象特性开发的命令行贪吃蛇游戏"]
+       ["./images/show-3.png","https://github.com/VijaySue/YuanShen","原神","一款基于QT&C++开发的消消乐游戏"]
     ],
 
 
