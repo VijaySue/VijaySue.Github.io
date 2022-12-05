@@ -79,7 +79,7 @@ var config = {
      * 通过查看实际效果以调整字题长度
      */
     portfolio: [
-       ["./images/show-1.png","https://vijaysue.github.io/","个人博客","利用JS，CSS，HTML技术开发的一站式个人博客"],
+       ["./images/show-1.png","https://vijaysue.github.io/","个人首页","利用JS，CSS，HTML技术开发的一站式个人博客"],
        ["./images/show-2.png","https://github.com/VijaySue/Snake","贪吃蛇","一款基于C++面向对象特性开发的命令行贪吃蛇游戏"]
        ["./images/show-3.png","https://github.com/VijaySue/YuanShen","原神","一款基于QT&C++开发的消消乐游戏"]
     ],
